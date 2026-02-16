@@ -4,17 +4,14 @@
 
 ## Pages
 
-### Home
+### Page
 https://example.com
 
-### Supplements
-https://example.com/supplements
+### Page
+https://example.com/vitamins
 
-### About
+### Page
 https://example.com/about
-
-### Contact
-https://example.com/contact
 
 ### Products
 https://example.com/products
@@ -32,21 +29,27 @@ Checkout
 https://example.com/login
 Customer Login
 
-### Account
+### My Account
 https://example.com/account
 My Account
 
-### Order Success
+### Order Received!
 https://example.com/order-success
 Thank you for your order
 
-### Product Detail
+### Product Details
 https://example.com/product/:slug
 Product Details - Dream Nutrition
 
-### Category
+### Products
 https://example.com/category/:slug
 Products - Dream Nutrition
+
+### Page
+https://example.com/contact
+
+### Page
+https://example.com/about-us
 
 ## Legal & Policy
 

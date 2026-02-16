@@ -26,11 +26,433 @@
     <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
     <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
     <!-- Cookie Consent -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.css">
     <script src="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.umd.js"></script>
     <!-- Mickidum Accessibility Toolbar -->
     <script src="https://cdn.jsdelivr.net/gh/mickidum/acc_toolbar/acctoolbar/acctoolbar.min.js"></script>
-<!-- Zappy Analytics -->
+
+          <style id="zappy-cta-mobile-style">
+            /* Hide CTA list item on desktop (tablets and up) */
+            @media (min-width: 769px) {
+              .nav-cta-item-mobile {
+                display: none !important;
+              }
+            }
+            /* Show CTA list item on mobile */
+            @media (max-width: 768px) {
+              .nav-cta-item-mobile {
+                display: list-item !important;
+              }
+            }
+          </style>
+        
+          <style id="zappy-nested-menu-style">
+            /* Desktop only: vertically center nav items */
+            @media (min-width: 769px) {
+              .nav-menu,
+              #navMenu {
+                align-items: center !important;
+              }
+            }
+            
+            /* Menu Group styling (non-clickable parent) - TOP LEVEL ONLY with ultra-specific selector */
+            .nav-menu > li > .menu-group-title,
+            #navMenu > li > .menu-group-title {
+              display: inline-block !important;
+              padding: 0.5rem 1rem !important;
+              color: var(--nav-color) !important;
+              font-weight: 500 !important;
+              line-height: 1.7 !important;
+              cursor: default !important;
+              user-select: none !important;
+              vertical-align: middle !important;
+              text-decoration: none !important;
+              margin: 0 !important;
+              transition: color 0.3s ease !important;
+            }
+            
+            .nav-menu > li > .menu-group-title:hover,
+            #navMenu > li > .menu-group-title:hover {
+              color: var(--nav-hover-color) !important;
+            }
+            
+            /* Desktop: show submenu on Menu Group hover */
+            li:has(.menu-group-title):hover > .sub-menu {
+              opacity: 1 !important;
+              visibility: visible !important;
+              transform: translateY(0) !important;
+              pointer-events: auto !important; /* Enable interaction when hovering */
+            }
+            
+            /* Hide menu items marked as hidden (overrides hover states) */
+            .zappy-hidden-menu-item,
+            li:has(.menu-group-title):hover > .sub-menu .zappy-hidden-menu-item {
+              display: none !important;
+              opacity: 0 !important;
+              visibility: hidden !important;
+              pointer-events: none !important;
+            }
+            
+            /* Keep submenu visible when hovering over the submenu itself */
+            .sub-menu:hover {
+              opacity: 1 !important;
+              visibility: visible !important;
+              pointer-events: auto !important;
+            }
+            
+            /* Nested dropdown menu styles - using more specific selectors */
+            .nav-menu .sub-menu,
+            nav .sub-menu,
+            .navbar .sub-menu {
+              display: block !important; /* Ensure submenu is in the DOM */
+              position: absolute !important;
+              top: 100%;
+              left: 0;
+              right: auto;
+              min-width: 200px;
+              background: white;
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+              border-radius: 8px;
+              padding: 8px 0;
+              margin-top: 0px; /* Remove gap to prevent hover loss */
+              opacity: 0 !important;
+              visibility: hidden !important;
+              transform: translateY(-10px);
+              transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+              z-index: 1000;
+              list-style: none;
+              pointer-events: none; /* Prevent interaction when hidden */
+            }
+            
+            /* RTL (Hebrew/Arabic) submenu positioning - align to right instead of left */
+            [dir="rtl"] .nav-menu .sub-menu,
+            [dir="rtl"] nav .sub-menu,
+            [dir="rtl"] .navbar .sub-menu,
+            html[lang="he"] .nav-menu .sub-menu,
+            html[lang="he"] nav .sub-menu,
+            html[lang="he"] .navbar .sub-menu,
+            html[lang="ar"] .nav-menu .sub-menu,
+            html[lang="ar"] nav .sub-menu,
+            html[lang="ar"] .navbar .sub-menu {
+              left: auto;
+              right: 0;
+            }
+            
+            /* Show submenu on parent hover - more specific selectors */
+            .nav-menu li:hover > .sub-menu,
+            nav li:hover > .sub-menu,
+            .navbar li:hover > .sub-menu {
+              opacity: 1 !important;
+              visibility: visible !important;
+              transform: translateY(0) !important;
+              pointer-events: auto !important; /* Enable interaction when visible */
+            }
+            
+            /* Parent item must be relatively positioned */
+            .nav-menu li:has(.sub-menu),
+            nav li:has(.sub-menu),
+            .navbar li:has(.sub-menu) {
+              position: relative;
+            }
+            
+            /* Style for submenu items */
+            .sub-menu li {
+              list-style: none;
+              margin: 0;
+              padding: 0;
+            }
+            
+            .sub-menu a,
+            .sub-menu .menu-group-title {
+              display: block !important;
+              padding: 10px 12px !important;
+              color: #333 !important;
+              font-weight: 600 !important;
+              text-decoration: none;
+              transition: background-color 0.2s;
+              white-space: nowrap;
+              cursor: default;
+            }
+            
+            .sub-menu a:hover {
+              background-color: #f5f5f5;
+            }
+            
+            /* CRITICAL: Override submenu styles for TOP-LEVEL Menu Groups only - must come AFTER submenu styles */
+            .nav-menu > li > .menu-group-title,
+            #navMenu > li > .menu-group-title {
+              display: inline-block !important;
+              padding: 0.5rem 1rem !important;
+              color: var(--nav-color) !important;
+              font-weight: 500 !important;
+              line-height: 1.7 !important;
+              cursor: default !important;
+              user-select: none !important;
+              vertical-align: middle !important;
+              text-decoration: none !important;
+              margin: 0 !important;
+              transition: color 0.3s ease !important;
+            }
+            
+            .nav-menu > li > .menu-group-title:hover,
+            #navMenu > li > .menu-group-title:hover {
+              color: var(--nav-hover-color) !important;
+              background-color: transparent !important;
+            }
+            
+            /* On mobile, show nested menus as expandable accordion */
+            @media (max-width: 768px) {
+              /* Mobile submenu styling */
+              .nav-menu .sub-menu,
+              nav .sub-menu,
+              .navbar .sub-menu {
+                position: static !important;
+                transform: none !important;
+                box-shadow: none !important;
+                background: transparent !important;
+                margin-top: 0 !important;
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                visibility: hidden;
+                transition: max-height 0.3s ease, opacity 0.3s ease, visibility 0.3s ease, padding 0.3s ease;
+                padding: 0 !important;
+                border-radius: 0 !important;
+              }
+              
+              /* Expanded state */
+              .sub-menu.mobile-expanded {
+                max-height: 500px !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+                padding: 8px 0 8px 16px !important;
+              }
+              
+              /* RTL padding adjustment */
+              [dir="rtl"] .sub-menu.mobile-expanded,
+              html[lang="he"] .sub-menu.mobile-expanded,
+              html[lang="ar"] .sub-menu.mobile-expanded {
+                padding: 8px 16px 8px 0 !important;
+              }
+              
+              /* Disable hover behavior on mobile */
+              .nav-menu li:hover > .sub-menu,
+              nav li:hover > .sub-menu,
+              .navbar li:hover > .sub-menu {
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+              }
+              
+              /* Enable visibility for expanded submenus */
+              .nav-menu li > .sub-menu.mobile-expanded,
+              nav li > .sub-menu.mobile-expanded,
+              .navbar li > .sub-menu.mobile-expanded {
+                opacity: 1 !important;
+                visibility: visible !important;
+                pointer-events: auto !important;
+              }
+              
+              .sub-menu a {
+                padding: 10px 0 !important;
+                display: block !important;
+                font-size: 14px !important;
+              }
+              
+              .sub-menu a:hover {
+                background-color: transparent !important;
+              }
+              
+              /* Parent item wrapper - flex layout for link + toggle */
+              .nav-menu li:has(.sub-menu),
+              nav li:has(.sub-menu),
+              .navbar li:has(.sub-menu) {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                align-items: center !important;
+              }
+              
+              /* Parent link - takes most space, allows navigation */
+              .nav-menu li:has(.sub-menu) > a,
+              nav li:has(.sub-menu) > a,
+              .navbar li:has(.sub-menu) > a,
+              .nav-menu > li > .menu-group-title,
+              #navMenu > li > .menu-group-title {
+                flex: 1 !important;
+              }
+              
+              /* HIDE EXISTING CHEVRONS/ARROWS from cloned sites to prevent duplicates */
+              .nav-menu li:has(.sub-menu) > a .fa-chevron-down,
+              .nav-menu li:has(.sub-menu) > a .fa-angle-down,
+              .nav-menu li:has(.sub-menu) > a [class*="chevron"],
+              .nav-menu li:has(.sub-menu) > a [class*="arrow"],
+              nav li:has(.sub-menu) > a [class*="chevron"],
+              nav li:has(.sub-menu) > a [class*="arrow"],
+              #navMenu li:has(.sub-menu) > a [class*="chevron"],
+              #navMenu li:has(.sub-menu) > a [class*="arrow"] {
+                display: none !important;
+                visibility: hidden !important;
+              }
+              
+              /* Toggle arrow button - separate clickable area */
+              .mobile-submenu-toggle {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 44px !important;
+                height: 44px !important;
+                background: transparent !important;
+                border: none !important;
+                cursor: pointer !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                flex-shrink: 0 !important;
+                -webkit-tap-highlight-color: transparent;
+              }
+              
+              .mobile-submenu-toggle::after {
+                content: '' !important;
+                display: block !important;
+                width: 0 !important;
+                height: 0 !important;
+                border-left: 6px solid transparent !important;
+                border-right: 6px solid transparent !important;
+                border-top: 7px solid currentColor !important;
+                transition: transform 0.3s ease !important;
+              }
+              
+              /* Rotate arrow when expanded */
+              .mobile-submenu-toggle.expanded::after {
+                transform: rotate(180deg) !important;
+              }
+              
+              /* Submenu takes full width below parent */
+              .nav-menu li:has(.sub-menu) > .sub-menu,
+              nav li:has(.sub-menu) > .sub-menu,
+              .navbar li:has(.sub-menu) > .sub-menu {
+                flex-basis: 100% !important;
+                width: 100% !important;
+              }
+            }
+            
+            /* Hide toggle button on desktop */
+            @media (min-width: 769px) {
+              .mobile-submenu-toggle {
+                display: none !important;
+              }
+            }
+          </style>
+          
+          <script id="zappy-mobile-menu-script">
+            // Mobile menu toggle for nested submenus (including Menu Groups)
+            // Uses separate toggle button - link navigates, arrow toggles submenu
+            (function() {
+              function initMobileMenuToggles() {
+                // Only run on mobile
+                if (window.innerWidth > 768) {
+                  // Remove any toggle buttons on desktop
+                  document.querySelectorAll('.mobile-submenu-toggle').forEach(btn => btn.remove());
+                  document.querySelectorAll('.sub-menu.mobile-expanded').forEach(menu => {
+                    menu.classList.remove('mobile-expanded');
+                  });
+                  console.log('[MOBILE MENU] Desktop mode - cleanup done');
+                  return;
+                }
+                
+                console.log('[MOBILE MENU] Initializing mobile menu toggles...');
+                
+                // Find all parent menu items (items with .sub-menu)
+                const menuItemsWithSubmenus = document.querySelectorAll(
+                  '.nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu)'
+                );
+                
+                console.log('[MOBILE MENU] Found', menuItemsWithSubmenus.length, 'items with submenus');
+                
+                menuItemsWithSubmenus.forEach(function(li) {
+                  // Skip if already has toggle button
+                  if (li.querySelector('.mobile-submenu-toggle')) {
+                    return;
+                  }
+                  
+                  const submenu = li.querySelector('.sub-menu');
+                  const parentLink = li.querySelector(':scope > a') || li.querySelector(':scope > .menu-group-title');
+                  
+                  if (!submenu || !parentLink) return;
+                  
+                  // Create toggle button
+                  const toggleBtn = document.createElement('button');
+                  toggleBtn.className = 'mobile-submenu-toggle';
+                  toggleBtn.setAttribute('aria-label', 'Toggle submenu');
+                  toggleBtn.setAttribute('type', 'button');
+                  
+                  // Insert toggle button after the link
+                  parentLink.insertAdjacentElement('afterend', toggleBtn);
+                  
+                  console.log('[MOBILE MENU] Created toggle button for:', parentLink.textContent?.trim());
+                  
+                  // Handle toggle button click - only toggles submenu
+                  toggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const isExpanded = submenu.classList.contains('mobile-expanded');
+                    
+                    // Close all other submenus first
+                    document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) {
+                      if (menu !== submenu) {
+                        menu.classList.remove('mobile-expanded');
+                        const otherToggle = menu.parentElement.querySelector('.mobile-submenu-toggle');
+                        if (otherToggle) otherToggle.classList.remove('expanded');
+                      }
+                    });
+                    
+                    // Toggle this submenu
+                    submenu.classList.toggle('mobile-expanded');
+                    toggleBtn.classList.toggle('expanded');
+                    
+                    console.log('[MOBILE MENU] Toggled submenu:', !isExpanded ? 'expanded' : 'collapsed');
+                  });
+                  
+                  // Parent link navigates normally - no preventDefault
+                });
+              }
+              
+              // Initialize on DOM load
+              if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initMobileMenuToggles);
+              } else {
+                initMobileMenuToggles();
+              }
+              
+              // Re-initialize on window resize (but use debounce to avoid too many calls)
+              let resizeTimer;
+              window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(initMobileMenuToggles, 250);
+              });
+              
+              // Also initialize when mobile menu becomes visible
+              // This handles cases where the mobile menu is hidden initially
+              const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                  if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    const target = mutation.target;
+                    if (target.classList.contains('active') || target.style.display !== 'none') {
+                      console.log('[MOBILE MENU] Mobile menu became visible, re-initializing...');
+                      setTimeout(initMobileMenuToggles, 100);
+                    }
+                  }
+                });
+              });
+              
+              // Observe mobile menu containers
+              const mobileMenus = document.querySelectorAll('.mobile-menu, .nav-menu, #navMenu');
+              mobileMenus.forEach(function(menu) {
+                observer.observe(menu, { attributes: true, attributeFilter: ['class', 'style'] });
+              });
+            })();
+          </script>
+        <!-- Zappy Analytics -->
 <script>
 (function() {
   'use strict';
@@ -232,48 +654,6 @@
 })();
 </script>
 <!-- End Zappy Analytics -->
-
-    <style id="zappy-dropdown-submenu-styles">
-      /* ========== DESKTOP DROPDOWN SUBMENU STYLES ========== */
-      /* Base styles for dropdown submenus - parent must be positioned */
-      .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { position: relative; }
-      /* Submenu base - hidden by default */
-      .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { display: block !important; position: absolute !important; top: 100%; left: 0; min-width: 220px; background: white; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); padding: 8px 0; opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; z-index: 1000; list-style: none; pointer-events: none; }
-      /* CRITICAL: Desktop hover styles to show dropdown */
-      .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
-      /* Submenu item styling */
-      .sub-menu li { list-style: none; margin: 0; padding: 0; }
-      .sub-menu a { display: block !important; padding: 10px 16px !important; color: #333 !important; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background-color 0.2s; }
-      .sub-menu a:hover { background-color: #f5f5f5; }
-      /* RTL (Hebrew/Arabic) dropdown positioning */
-      [dir="rtl"] .nav-menu .sub-menu, [dir="rtl"] nav .sub-menu, [dir="rtl"] .navbar .sub-menu, html[lang="he"] .nav-menu .sub-menu, html[lang="he"] nav .sub-menu, html[lang="he"] .navbar .sub-menu, html[lang="ar"] .nav-menu .sub-menu, html[lang="ar"] nav .sub-menu, html[lang="ar"] .navbar .sub-menu { left: auto !important; right: 0 !important; }
-      /* Hide empty dropdown menus */
-      .sub-menu:empty, .sub-menu:not(:has(li:not(.zappy-hidden-menu-item))), .sub-menu:not(:has(li)) { display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
-      /* Desktop: show submenu on Menu Group hover */
-      li:has(.menu-group-title):hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
-      /* Menu Group title styling */
-      .nav-menu > li > .menu-group-title, #navMenu > li > .menu-group-title { display: inline-block; padding: 0.5rem 1rem; cursor: default; user-select: none; }
-      
-      /* ========== MOBILE SUBMENU STYLES ========== */
-      @media (max-width: 768px) {
-        .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { position: static !important; transform: none !important; box-shadow: none !important; background: transparent !important; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden; transition: max-height 0.3s ease, opacity 0.3s ease; padding: 0 !important; border-radius: 0 !important; }
-        .sub-menu.mobile-expanded { max-height: 500px !important; opacity: 1 !important; visibility: visible !important; padding: 8px 0 8px 16px !important; }
-        [dir="rtl"] .sub-menu.mobile-expanded, html[lang="he"] .sub-menu.mobile-expanded { padding: 8px 16px 8px 0 !important; }
-        /* Disable hover behavior on mobile */
-        .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 0; visibility: hidden; pointer-events: none; }
-        .nav-menu li > .sub-menu.mobile-expanded, nav li > .sub-menu.mobile-expanded, .navbar li > .sub-menu.mobile-expanded, #navMenu li > .sub-menu.mobile-expanded { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
-        .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { display: flex !important; flex-wrap: wrap !important; align-items: center !important; }
-        .nav-menu li:has(.sub-menu) > a, nav li:has(.sub-menu) > a, .navbar li:has(.sub-menu) > a, #navMenu li:has(.sub-menu) > a { flex: 1 !important; }
-        .nav-menu li:has(.sub-menu) > a [class*="chevron"], .nav-menu li:has(.sub-menu) > a [class*="arrow"], .nav-menu li:has(.sub-menu) > a .fa-chevron-down, .nav-menu li:has(.sub-menu) > a .fa-angle-down, nav li:has(.sub-menu) > a [class*="chevron"], nav li:has(.sub-menu) > a [class*="arrow"], #navMenu li:has(.sub-menu) > a [class*="chevron"], #navMenu li:has(.sub-menu) > a [class*="arrow"] { display: none !important; visibility: hidden !important; }
-        .mobile-submenu-toggle { display: flex !important; align-items: center !important; justify-content: center !important; width: 44px !important; height: 44px !important; background: transparent !important; border: none !important; cursor: pointer !important; }
-        .mobile-submenu-toggle::after { content: '' !important; width: 0 !important; height: 0 !important; border-left: 6px solid transparent !important; border-right: 6px solid transparent !important; border-top: 7px solid currentColor !important; transition: transform 0.3s ease !important; }
-        .mobile-submenu-toggle.expanded::after { transform: rotate(180deg) !important; }
-        .nav-menu li:has(.sub-menu) > .sub-menu, nav li:has(.sub-menu) > .sub-menu { flex-basis: 100% !important; width: 100% !important; }
-        .sub-menu a { padding: 10px 0 !important; display: block !important; }
-        .nav-menu li:has(.sub-menu) > .menu-group-title, nav li:has(.sub-menu) > .menu-group-title, .navbar li:has(.sub-menu) > .menu-group-title, #navMenu li:has(.sub-menu) > .menu-group-title { flex: 1 !important; }
-      }
-      @media (min-width: 769px) { .mobile-submenu-toggle { display: none !important; } }
-    </style>
 </head>
 <body>
 
@@ -281,37 +661,31 @@
       <div class="search-wrapper">
         <input type="text" id="mobile-search-input" placeholder="Search products..." autocomplete="off">
         <button class="search-submit" id="mobile-search-submit" title="Search">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
         </button>
         <button class="close-search" id="close-mobile-search">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
         </button>
       </div>
       <div class="search-results" id="mobile-search-results"></div>
     </div>
   
 <script>window.ZAPPY_WEBSITE_ID = "a65284ee-ab17-472d-897a-60f9e7753cfd";window.ZAPPY_API_BASE = (window.location.pathname.includes('/preview') ? "https://api.zappy5.com" : "https://api.zappy5.com");</script>
-  <nav class="navbar"><button class="mobile-toggle" id="mobileToggle" aria-label="Menu"><svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg><svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display:none;"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></button><button class="phone-header-btn" aria-label="Call"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></button><div class="nav-container"><div class="nav-brand"><a href="/" class="logo-link"><img src="/assets/dream-nutrition-sports-nutrition-and-supplements-logo.webp" alt="Dream Nutrition" class="logo" /></a></div><ul class="nav-menu" id="navMenu">
-
-    <li class="menu-item-has-children zappy-products-dropdown">
+  <nav class="navbar"><button class="mobile-toggle" id="mobileToggle" aria-label="Menu"><svg class="hamburger-icon" width="24" height="24" viewbox="0 0 24 24" fill="none"><path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg><svg class="close-icon" width="24" height="24" viewbox="0 0 24 24" fill="none" style="display:none;"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></button><button class="phone-header-btn" aria-label="Call"><svg width="20" height="20" viewbox="0 0 24 24" fill="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></button><div class="nav-container"><div class="nav-brand"><a href="/" class="logo-link"><img src="/assets/dream-nutrition-sports-nutrition-and-supplements-logo.webp" alt="Dream Nutrition" class="logo"></a></div><ul class="nav-menu" id="navMenu"><li><a href="/vitamins">ויטמינים</a></li><li><a href="/about">אודות</a></li><li class="menu-item-has-children zappy-products-dropdown">
       <a href="/products">
         Products
-        <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg class="dropdown-arrow" width="12" height="12" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M6 9l6 6 6-6"></path>
         </svg>
       </a>
-      <ul class="sub-menu" id="zappy-nav-category-links">
-        <li><a href="/products">All Products</a></li>
-        <!-- Categories will be loaded dynamically -->
-      </ul>
-    </li>
-  <li><a href="/supplements">Supplements</a></li><li><a href="/about">About</a></li><li><a href="/contact">Contact</a></li></ul><div class="nav-ecommerce-icons nav-icons-left"><a href="/login" class="login-link nav-login" title="Login"><svg class="login-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a><a href="#cart" class="cart-link nav-cart" id="cart-drawer-toggle" title="Cart"><svg class="cart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span class="cart-count">0</span></a><div class="nav-search-box">
+      
+    </li><li><a href="/cart">Cart</a></li><li><a href="/checkout">Checkout</a></li><li><a href="/login">Login</a></li><li><a href="/account">My Account</a></li><li><a href="/order-success">Order Received!</a></li><li><a href="/product/:slug">Product Details</a></li><li><a href="/category/:slug">Products</a></li><li><a href="/contact">Contact</a></li><li><a href="/about-us">אודות</a></li></ul><div class="nav-ecommerce-icons nav-icons-left"><a href="/login" class="login-link nav-login" title="Login"><svg class="login-icon" width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></a><a href="#cart" class="cart-link nav-cart" id="cart-drawer-toggle" title="Cart"><svg class="cart-icon" width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg><span class="cart-count">0</span></a><div class="nav-search-box">
     <input type="text" class="nav-search-input" id="nav-search-input" placeholder="Search products..." autocomplete="off">
     <button class="nav-search-btn" id="nav-search-btn" title="Search">
-      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <svg class="search-icon" width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
     </button>
     <div class="nav-search-results" id="nav-search-results"></div>
-  </div></div><div class="nav-ecommerce-icons nav-icons-right"><button class="nav-search-toggle" id="mobile-search-toggle" title="Search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></button></div></div></nav>
+  </div></div><div class="nav-ecommerce-icons nav-icons-right"><button class="nav-search-toggle" id="mobile-search-toggle" title="Search"><svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg></button></div></div></nav>
 
     <nav class="zappy-catalog-menu ltr" id="zappy-catalog-menu" dir="ltr">
       <div class="catalog-menu-container">
@@ -336,27 +710,27 @@
       <h3 class="home-hero-section__subtitle">Premium vitamin B12 supplements crafted for athletes who demand quality, transparency, and results.</h3>
       <div class="home-hero-section__cta-group">
         <a href="/contact" class="home-hero-section__btn-primary">Build Your Stack</a>
-        <a href="/supplements" class="home-hero-section__btn-secondary">See Categories</a>
+        <a href="/vitamins" class="home-hero-section__btn-secondary">ויטמינים</a>
       </div>
     </div>
   </div>
   
   <div class="home-hero-section__divider-wrapper" aria-hidden="true">
-    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 1200 40" preserveaspectratio="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="home-hero-neon-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <lineargradient id="home-hero-neon-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stop-color="rgba(0,230,255,0)"></stop>
           <stop offset="12%" stop-color="rgba(0,230,255,0.9)"></stop>
           <stop offset="50%" stop-color="rgba(255,45,170,0.9)"></stop>
           <stop offset="88%" stop-color="rgba(255,210,0,0.9)"></stop>
           <stop offset="100%" stop-color="rgba(255,210,0,0)"></stop>
-        </linearGradient>
+        </lineargradient>
         <filter id="home-hero-glow-filter">
-          <feGaussianBlur stdDeviation="3" result="coloredBlur"></feGaussianBlur>
-          <feMerge>
-            <feMergeNode in="coloredBlur"></feMergeNode>
-            <feMergeNode in="SourceGraphic"></feMergeNode>
-          </feMerge>
+          <fegaussianblur stddeviation="3" result="coloredBlur"></fegaussianblur>
+          <femerge>
+            <femergenode in="coloredBlur"></femergenode>
+            <femergenode in="SourceGraphic"></femergenode>
+          </femerge>
         </filter>
       </defs>
       <path d="M0,40 L0,20 Q300,15 600,22 Q900,15 1200,20 L1200,40 Z" fill="var(--bg-dark)"></path>
@@ -397,7 +771,7 @@
 
     <div class="home-benefits-grid">
       <div class="home-benefits-tile">
-        <svg data-element-type="icon" data-icon-type="svg" class="home-benefits-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg data-element-type="icon" data-icon-type="svg" class="home-benefits-icon" viewbox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M24 8L24 40M24 8L14 18M24 8L34 18M24 40L14 30M24 40L34 30M8 24L40 24M8 24L18 14M8 24L18 34M40 24L30 14M40 24L30 34" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
         </svg>
         <h3>Clean Energy</h3>
@@ -405,7 +779,7 @@
       </div>
 
       <div class="home-benefits-tile">
-        <svg data-element-type="icon" data-icon-type="svg" class="home-benefits-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg data-element-type="icon" data-icon-type="svg" class="home-benefits-icon" viewbox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M10 24C10 16.268 16.268 10 24 10C31.732 10 38 16.268 38 24M24 24V10M24 24L34 34M24 24L14 34M38 24C38 31.732 31.732 38 24 38C16.268 38 10 31.732 10 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
           <circle cx="24" cy="24" r="3" stroke="currentColor" stroke-width="2"></circle>
         </svg>
@@ -414,7 +788,7 @@
       </div>
 
       <div class="home-benefits-tile">
-        <svg data-element-type="icon" data-icon-type="svg" class="home-benefits-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg data-element-type="icon" data-icon-type="svg" class="home-benefits-icon" viewbox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M24 6L24 42M24 6C18 6 12 10 12 16C12 22 18 26 24 26M24 6C30 6 36 10 36 16C36 22 30 26 24 26M24 26C18 26 12 30 12 36C12 42 18 46 24 46M24 26C30 26 36 30 36 36C36 42 30 46 24 46" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
         </svg>
         <h3>Recovery Focus</h3>
@@ -429,15 +803,15 @@
   </div>
 
   <div class="home-benefits-divider-wrapper">
-    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 1200 80" preserveaspectratio="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="benefits-divider-glow" x1="0%" y1="0%" x2="100%" y2="0%">
+        <lineargradient id="benefits-divider-glow" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" style="stop-color:#00E6FF;stop-"></stop>
           <stop offset="20%" style="stop-color:#00E6FF;stop-opacity:0.4"></stop>
           <stop offset="50%" style="stop-color:#00E6FF;stop-opacity:0.6"></stop>
           <stop offset="80%" style="stop-color:#00E6FF;stop-opacity:0.4"></stop>
           <stop offset="100%" style="stop-color:#00E6FF;stop-"></stop>
-        </linearGradient>
+        </lineargradient>
       </defs>
       <path d="M0,80 L0,35 L1200,20 L1200,80 Z" fill="var(--bg-light)"></path>
       <path d="M0,35 L1200,20" stroke="url(#benefits-divider-glow)" stroke-width="1" fill="none"></path>
@@ -522,13 +896,13 @@
   </div>
   
   <div class="home-product-grid-divider-wrapper">
-    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 1200 120" preserveaspectratio="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="home-product-grid-fade" x1="0%" y1="0%" x2="0%" y2="100%">
+        <lineargradient id="home-product-grid-fade" x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" style="stop-color:#E2E6EF;stop-opacity:1"></stop>
           <stop offset="25%" style="stop-color:#4A5568;stop-opacity:1"></stop>
           <stop offset="100%" style="stop-color:#0E1014;stop-opacity:1"></stop>
-        </linearGradient>
+        </lineargradient>
       </defs>
       <rect x="0" y="0" width="1200" height="120" fill="url(#home-product-grid-fade)"></rect>
     </svg>
@@ -544,74 +918,74 @@
 
     <div class="home-brands-logo-wall">
       <div class="home-brands-logo-item">
-        <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+        <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
           <rect x="10" y="8" width="100" height="24" rx="2" fill="none" stroke="currentColor" stroke-width="2"></rect>
           <text x="60" y="26" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="currentColor" text-anchor="middle">BRAND A</text>
         </svg>
       </div>
       <div class="home-brands-logo-item">
-        <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+        <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
           <circle cx="60" cy="20" r="16" fill="none" stroke="currentColor" stroke-width="2"></circle>
           <text x="60" y="25" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="currentColor" text-anchor="middle">BRAND B</text>
         </svg>
       </div>
       <div class="home-brands-logo-item">
-        <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+        <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
           <polygon points="60,5 110,35 10,35" fill="none" stroke="currentColor" stroke-width="2"></polygon>
           <text x="60" y="28" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="currentColor" text-anchor="middle">BRAND C</text>
         </svg>
       </div>
       <div class="home-brands-logo-item">
-        <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+        <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
           <path d="M20,20 L50,8 L80,20 L50,32 Z" fill="none" stroke="currentColor" stroke-width="2"></path>
           <text x="60" y="24" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="currentColor" text-anchor="middle">BRAND D</text>
         </svg>
       </div>
       <div class="home-brands-logo-item">
-        <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+        <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
           <rect x="15" y="10" width="90" height="20" rx="10" fill="none" stroke="currentColor" stroke-width="2"></rect>
           <text x="60" y="25" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="currentColor" text-anchor="middle">BRAND E</text>
         </svg>
       </div>
       <div class="home-brands-logo-item">
-        <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+        <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
           <path d="M30,10 L90,10 L90,30 L30,30 Z M40,15 L80,15 L80,25 L40,25 Z" fill="none" stroke="currentColor" stroke-width="2"></path>
           <text x="60" y="24" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="currentColor" text-anchor="middle">BRAND F</text>
         </svg>
       </div>
       <div class="home-brands-logo-item">
-        <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+        <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
           <ellipse cx="60" cy="20" rx="40" ry="14" fill="none" stroke="currentColor" stroke-width="2"></ellipse>
           <text x="60" y="25" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="currentColor" text-anchor="middle">BRAND G</text>
         </svg>
       </div>
       <div class="home-brands-logo-item">
-        <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+        <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
           <path d="M30,20 L60,8 L90,20 L60,32 Z" fill="none" stroke="currentColor" stroke-width="2"></path>
           <text x="60" y="24" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="currentColor" text-anchor="middle">BRAND H</text>
         </svg>
       </div>
       <div class="home-brands-logo-item">
-        <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+        <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
           <rect x="20" y="12" width="80" height="16" fill="none" stroke="currentColor" stroke-width="2"></rect>
           <text x="60" y="24" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="currentColor" text-anchor="middle">BRAND I</text>
         </svg>
       </div>
       <div class="home-brands-logo-item">
-        <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+        <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
           <polygon points="60,10 85,30 35,30" fill="none" stroke="currentColor" stroke-width="2"></polygon>
           <text x="60" y="27" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="currentColor" text-anchor="middle">BRAND J</text>
         </svg>
       </div>
       <div class="home-brands-logo-item">
-        <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+        <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
           <circle cx="60" cy="20" r="14" fill="none" stroke="currentColor" stroke-width="2"></circle>
           <circle cx="60" cy="20" r="8" fill="none" stroke="currentColor" stroke-width="2"></circle>
           <text x="60" y="38" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="currentColor" text-anchor="middle">BRAND K</text>
         </svg>
       </div>
       <div class="home-brands-logo-item">
-        <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+        <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
           <path d="M25,15 L60,15 L60,25 L25,25 Z M65,15 L95,15 L95,25 L65,25 Z" fill="none" stroke="currentColor" stroke-width="2"></path>
           <text x="60" y="37" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="currentColor" text-anchor="middle">BRAND L</text>
         </svg>
@@ -637,7 +1011,7 @@
   </div>
 
   <div class="home-brands-divider-wrapper">
-    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 1200 60" preserveaspectratio="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M0,60 L0,30 L400,30 L400,15 L800,15 L800,30 L1200,30 L1200,60 Z" fill="var(--bg-light)"></path>
       <path d="M0,30 L400,30 L400,15 L800,15 L800,30 L1200,30" stroke="rgba(0,230,255,0.4)" stroke-width="1" fill="none"></path>
     </svg>
@@ -656,7 +1030,7 @@
 </section>
   </main>
   
-  <footer class="site-footer"><div class="footer-container"><div class="footer-grid"><div class="footer-column footer-brand"><img src="/assets/dream-nutrition-sports-nutrition-and-supplements-logo.webp" alt="Dream Nutrition" class="logo" /><p class="footer-tagline">Fuel your performance, achieve your dreams.</p><div class="social-links"><a href="[facebook_handle]" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="[instagram_handle]" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="[whatsapp_handle]" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a></div></div><div class="footer-column"><h4>Quick Links</h4><ul class="footer-links"><li><a href="/supplements">Supplements</a></li><li><a href="/about">About</a></li><li><a href="/contact">Contact</a></li></ul></div><div class="footer-column"><h4>Contact Us</h4><ul class="footer-contact"><li><i class="fas fa-envelope"></i><a href="mailto:[business_email]">[business_email]</a></li><li><i class="fas fa-phone"></i><a href="tel:[business_phone]">[business_phone]</a></li><li><a href="/"><i class="fas fa-map-marker-alt"></i><span>[business_address]</span></a></li></ul></div><div class="footer-column"><h4>Legal</h4><ul class="footer-links"><li><a href="/privacy">Privacy Policy</a></li><li><a href="/terms">Terms &amp; Conditions</a><span class="separator">|</span>
+  <footer class="site-footer"><div class="footer-container"><div class="footer-grid"><div class="footer-column footer-brand"><img src="/assets/dream-nutrition-sports-nutrition-and-supplements-logo.webp" alt="Dream Nutrition" class="logo"><p class="footer-tagline">Fuel your performance, achieve your dreams.</p><div class="social-links"><a href="[facebook_handle]" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="[instagram_handle]" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="[whatsapp_handle]" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a></div></div><div class="footer-column"><h4>Quick Links</h4><ul class="footer-links"><li><a href="/vitamins">ויטמינים</a></li><li><a href="/about">אודות</a></li><li><a href="/contact">Contact</a></li></ul></div><div class="footer-column"><h4>Contact Us</h4><ul class="footer-contact"><li><i class="fas fa-envelope"></i><a href="mailto:[business_email]">[business_email]</a></li><li><i class="fas fa-phone"></i><a href="tel:[business_phone]">[business_phone]</a></li><li><a href="/"><i class="fas fa-map-marker-alt"></i><span>[business_address]</span></a></li></ul></div><div class="footer-column"><h4>Legal</h4><ul class="footer-links"><li><a href="/privacy">Privacy Policy</a></li><li><a href="/terms">Terms &amp; Conditions</a><span class="separator">|</span>
             <a href="/return-policy" aria-label="Return Policy">
               Return Policy
             </a></li><li><a href="/accessibility">Accessibility</a></li></ul></div></div><div class="footer-bottom"><p class="copyright">© 2026 Dream Nutrition. All rights reserved.</p><a href="https://zappy5.com" target="_blank" class="zappy-attribution">Generated by Zappy</a></div></div></footer>
